@@ -11,6 +11,7 @@ import SwiftyJSON
 class currentdata:NSObject {
 //定义属性
 }
+//http://api.avatardata.cn/Weather/Query?key=7fdd18a26632413982d69f58977ec744&cityname=海安
 extension  currentdata{
  //请求数据
     func requestcurrentdata(completion:@escaping (_ data:[JSON])->()){
@@ -28,12 +29,20 @@ extension  currentdata{
           let week = totaldata["weather"]?[0]["week"]
           let high = totaldata["weather"]?[0]["info"]["day"][2]
           let low = totaldata["weather"]?[0]["info"]["night"][2]
+            
+            let img = totaldata["realtime"]?["weather"]["img"]//天气图标
+            let direct = totaldata["realtime"]?["wind"]["direct"]//风向
+            let power = totaldata["realtime"]?["wind"]["power"]//风力
+            
             dataarry.append(low!)
             dataarry.append(high!)
             dataarry.append(week!)
             dataarry.append(temperature!)
             dataarry.append(info!)
             dataarry.append(cityname!)
+            dataarry.append(img!)
+            dataarry.append(direct!)
+            dataarry.append(power!)
             completion(dataarry)
             
         }

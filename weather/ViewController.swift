@@ -9,6 +9,7 @@
 import UIKit
 import SwiftyJSON
 import SwiftGifOrigin
+import UserNotifications
 class ViewController: UIViewController,shareviewdelegate {
  //拖
     @IBOutlet weak var beijing: UIImageView!
@@ -46,25 +47,63 @@ class ViewController: UIViewController,shareviewdelegate {
         lodaweekdata()
         loadadvicedata()
         lodahuanglidata()
-        
+     //3.本地定时推送
+        pushnotification()
        
     }
     func sharebtnclick(index:Int){
         if index == 0 {
            
             currentmodel.requestcurrentdata(completion: { (data) in
-                let info:String = "\(data[5]),\(data[4]),当前温度\(data[3])°,最高温度\(data[1])°,最低温度\(data[0])°。"
+                let info:String = "\(data[5]),\(data[4]),当前温度\(data[3])°,最高温度\(data[1])°,最低温度\(data[0])°,\(data[7])\(data[8])。"
                 WXApi.sharetext(text: info, insence: WXSceneTimeline)
             })
         }
         else if index == 1 {
             
             currentmodel.requestcurrentdata(completion: { (data) in
-                let info:String = "\(data[5]),\(data[4]),当前温度\(data[3])°,最高温度\(data[1])°,最低温度\(data[0])°,"
+                let info:String = "\(data[5]),\(data[4]),当前温度\(data[3])°,最高温度\(data[1])°,最低温度\(data[0])°,\(data[7])\(data[8])。"
                 WXApi.sharetext(text: info, insence: WXSceneSession)
             })
         }
 
+    }
+}
+//消息推送
+extension ViewController{
+    fileprivate func pushnotification(){
+        currentmodel.requestcurrentdata { (data) in
+            
+            let info:String = "\(data[5]),\(data[4]),当前温度\(data[3])°,最高温度\(data[1])°,最低温度\(data[0])°,\(data[7])\(data[8])。"
+            let content = UNMutableNotificationContent()
+            content.title = "天气"
+            content.subtitle = "顾大侠创作的"
+            content.badge = 1
+            content.body = info
+            content.sound = UNNotificationSound.default()
+            
+//            let imgname = "applelogo"
+//            guard let imgurl = Bundle.main.url(forResource: imgname, withExtension: "png") else{
+//                return
+//            }
+//            let attachment = try! UNNotificationAttachment(identifier: imgname, url: imgurl, options: .none)
+//            content.attachments = [attachment]
+            
+            print(content)
+
+            var components = DateComponents()
+            components.hour = 6
+            components.minute = 0
+            let tigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+            //let tigger = UNTimeIntervalNotificationTrigger(timeInterval: 60, repeats: true)
+            let requestid = "first"
+            let request = UNNotificationRequest(identifier: requestid, content: content, trigger: tigger)
+            UNUserNotificationCenter.current().add(request) { (error) in
+                if error == nil{
+                    print("推送成功")
+                }
+            }
+        }
     }
 }
 //设置ui
@@ -190,7 +229,7 @@ extension ViewController{
         self.week.text = "星期\(data[2])"
         self.high.text = "\(data[1])"
         self.low.text = "\(data[0])"
-       self.beijing.loadGif(name: "\(data[4])")
+        self.beijing.loadGif(name: "\(data[4])")
         
      }
     }

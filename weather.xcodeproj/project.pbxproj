@@ -298,6 +298,11 @@
 						DevelopmentTeam = U955FM7S6Y;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 					431A14581EB7713F00A29356 = {
 						CreatedOnToolsVersion = 8.3.2;
